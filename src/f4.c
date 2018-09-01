@@ -45,7 +45,8 @@ int64_t f4_julia(
         const int32_t max_nr_pairs,
         const int32_t reset_hash_table,
         const int32_t la_option,
-        const int32_t info_level
+        const int32_t info_level,
+        const wt_t * order_weights
         )
 {
     /* timings */
@@ -65,7 +66,7 @@ int64_t f4_julia(
      * some of the input data is corrupted. */
     if (check_and_set_meta_data(ps, lens, cfs, exps, field_char, mon_order,
                 nr_vars, nr_gens, ht_size, nr_threads, max_nr_pairs, reset_hash_table,
-                la_option, info_level)) {
+                la_option, info_level, order_weights)) {
         return 0;
     }
 
@@ -76,13 +77,13 @@ int64_t f4_julia(
         printf("#variables             %11d\n", nvars);
         printf("#equations             %11d\n", nr_gens);
         printf("field characteristic   %11d\n", fc);
-        if (mo == 0) {
+        if (mo == DRL) {
             printf("monomial order                 DRL\n");
         }
-        if (mo == 1) {
+        if (mo == LEX) {
             printf("monomial order                 LEX\n");
         }
-        if ((mo != 0) && (mo != 1)) {
+        if (mo >= LAST_ORDERING) {
             printf("monomial order           DONT KNOW\n");
         }
         printf("linear algebra option  %11d\n", laopt);
