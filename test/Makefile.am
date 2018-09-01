@@ -60,6 +60,7 @@ TESTS =															\
 	test_mayr_42											\
 	test_bayes_148										\
 	test_cyclic_6_lex_17_bit		
+	test_cyclic_6_weighted_17_bit	
 
 XFAIL_TESTS = 											\
 	xtest_input_meta_data
