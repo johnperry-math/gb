@@ -42,7 +42,6 @@
 
 /* computational data */
 typedef int32_t cf_t;     /* coefficient type */
-typedef int32_t wt_t;     /* weight vector entry type */
 typedef int32_t val_t;    /* core values like hashes */
 typedef val_t hl_t;       /* length of hash table */
 typedef hl_t dt_t;        /* data type for other polynomial informatio */
@@ -154,14 +153,10 @@ struct ps_t
     spair_t *p;
 };
 
-// monomial orderings
-enum Ordering { DRL, LEX, WGT, LAST_ORDERING };
-
-// weight vector for monomial ordering
-static const wt_t * weights;
-
-/* monomial order */
-static val_t mo = DRL;
+/* monomial order - until we have general orders:
+ * 0 = DRL
+ * 1 = LEX */
+static val_t mo = 0;
 
 /* field characteristic */
 static cf_t fc = 0;
@@ -291,7 +286,6 @@ int64_t f4_julia(
         const int32_t max_nr_pairs,
         const int32_t reset_hash_table,
         const int32_t la_option,
-        const int32_t info_level,
-        const wt_t * order_weights
+        const int32_t info_level
         );
 #endif

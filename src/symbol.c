@@ -118,16 +118,9 @@ static dt_t **select_spairs_by_minimal_degree(
             /* b = (hl_t *)((long)bs[gens[k]] & bmask); */
             eb  = ev[b[3]];
             /* m = monomial_division_no_check(lcm, b[2]); */
-            if (mo == WGT) {
-              for (l = 0; l < nvars; ++l) {
-                  etmp[l] = elcm[l] - eb[l];
-                  d     +=  etmp[l] * weights[l];
-              }
-            } else {
-              for (l = 0; l < nvars; ++l) {
-                  etmp[l] = elcm[l] - eb[l];
-                  d     +=  etmp[l];
-              }
+            for (l = 0; l < nvars; ++l) {
+                etmp[l] = elcm[l] - eb[l];
+                d     +=  etmp[l];
             }
             const hl_t h  = hd[lcm].val - hd[b[3]].val;
             mat[nrows]    = multiplied_polynomial_to_matrix_row(h, d, etmp, b);
@@ -206,14 +199,8 @@ start:
             etmp[k] = e[k] - f[k];
         }
         const hl_t h  = hd[m].val - hd[b[3]].val;
-        if (mo == WGT) {
-          for (k = 0; k < nvars; ++k) {
-              d += etmp[k] * weights[k];
-          }
-        } else {
-          for (k = 0; k < nvars; ++k) {
-              d += etmp[k];
-          }
+        for (k = 0; k < nvars; ++k) {
+            d += etmp[k];
         }
         b = multiplied_polynomial_to_matrix_row(h, d, etmp, b);
         hd[m].div = i;
@@ -241,14 +228,8 @@ start2:
             etmp[k] = e[k] - f[k];
         }
         const hl_t h  = hd[m].val - hd[b[3]].val;
-        if (mo == WGT) {
-          for (k = 0; k < nvars; ++k) {
-              d += etmp[k] * weights[k];
-          }
-        } else {
-          for (k = 0; k < nvars; ++k) {
-              d += etmp[k];
-          }
+        for (k = 0; k < nvars; ++k) {
+            d += etmp[k];
         }
         b = multiplied_polynomial_to_matrix_row(h, d, etmp, b);
         hd[m].div = i;

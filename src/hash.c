@@ -414,16 +414,9 @@ static inline hl_t insert_in_global_hash_table(
   e   = ev[pos];
   d   = hd + pos;
   deg = 0;
-  if (mo == WGT) {
-    for (j = 0; j < nvars; ++j) {
-      e[j]  =   a[j];
-      deg   +=  a[j] * weights[j];
-    }
-  } else {
-    for (j = 0; j < nvars; ++j) {
-      e[j]  =   a[j];
-      deg   +=  a[j];
-    }
+  for (j = 0; j < nvars; ++j) {
+    e[j]  =   a[j];
+    deg   +=  a[j];
   }
   d->deg  = deg;
   d->sdm  = generate_short_divmask(e);
@@ -473,16 +466,9 @@ static inline hl_t insert_in_global_hash_table_no_enlargement_check(
   e   = ev[pos];
   d   = hd + pos;
   deg = 0;
-  if (mo == WGT) {
-    for (j = 0; j < nvars; ++j) {
-      e[j]  =   a[j];
-      deg   +=  a[j] * weights[j];
-    }
-  } else {
-    for (j = 0; j < nvars; ++j) {
-      e[j]  =   a[j];
-      deg   +=  a[j];
-    }
+  for (j = 0; j < nvars; ++j) {
+    e[j]  =   a[j];
+    deg   +=  a[j];
   }
   d->deg  = deg;
   d->sdm  = generate_short_divmask(e);
@@ -530,16 +516,9 @@ static inline hl_t insert_in_local_hash_table(
   e   = evl[pos];
   d   = hdl + pos;
   deg = 0;
-  if (mo == WGT) {
-    for (j = 0; j < nvars; ++j) {
-      e[j]  =   a[j];
-      deg   +=  a[j] * weights[j];
-    }
-  } else {
-    for (j = 0; j < nvars; ++j) {
-      e[j]  =   a[j];
-      deg   +=  a[j];
-    }
+  for (j = 0; j < nvars; ++j) {
+    e[j]  =   a[j];
+    deg   +=  a[j];
   }
   d->deg  = deg;
   d->sdm  = generate_short_divmask(e);

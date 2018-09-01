@@ -110,8 +110,7 @@ static inline int32_t check_and_set_meta_data(
         const int32_t max_nr_pairs,
         const int32_t reset_hash_table,
         const int32_t la_option,
-        const int32_t info_level,
-        const wt_t * wts
+        const int32_t info_level
         )
 {
     if (nr_gens <= 0
@@ -127,13 +126,10 @@ static inline int32_t check_and_set_meta_data(
     /* note: prime check should be done in julia */
     fc    = field_char;
     /* monomial order */
-    if (mon_order >= LAST_ORDERING) {
-        mo  = DRL;
+    if (mon_order != 0 && mon_order != 1) {
+        mo  = 0;
     } else {
         mo  = mon_order;
-        if (mo == WGT) {
-          weights = wts;
-        }
     }
     /* set hash table size */
     htes  = ht_size;
