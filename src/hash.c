@@ -384,7 +384,7 @@ static inline hl_t insert_in_global_hash_table(
 {
   hl_t i, k, pos;
   len_t j;
-  exp_t deg;
+  exp_t deg, wgt;
   exp_t *e;
   hd_t *d;
   val_t h = 0;
@@ -413,17 +413,20 @@ static inline hl_t insert_in_global_hash_table(
   hmap[k]  = pos = eld;
   e   = ev[pos];
   d   = hd + pos;
-  deg = 0;
+  deg = wgt = 0;
   if (mo == WGT) {
     for (j = 0; j < nvars; ++j) {
       e[j]  =   a[j];
-      deg   +=  a[j] * weights[j];
+      deg   +=  a[j];
+      wgt   +=  a[j] * weights[j];
     }
+    d->wgt = wgt;
   } else {
     for (j = 0; j < nvars; ++j) {
       e[j]  =   a[j];
       deg   +=  a[j];
     }
+    d->wgt = deg;
   }
   d->deg  = deg;
   d->sdm  = generate_short_divmask(e);
@@ -443,7 +446,7 @@ static inline hl_t insert_in_global_hash_table_no_enlargement_check(
 {
   hl_t i, k, pos;
   len_t j;
-  exp_t deg;
+  exp_t deg, wgt;
   exp_t *e;
   hd_t *d;
   val_t h = 0;
@@ -472,17 +475,20 @@ static inline hl_t insert_in_global_hash_table_no_enlargement_check(
   hmap[k]  = pos = eld;
   e   = ev[pos];
   d   = hd + pos;
-  deg = 0;
+  deg = wgt = 0;
   if (mo == WGT) {
     for (j = 0; j < nvars; ++j) {
       e[j]  =   a[j];
-      deg   +=  a[j] * weights[j];
+      deg   +=  a[j];
+      wgt   +=  a[j] * weights[j];
     }
+    d->wgt = wgt;
   } else {
     for (j = 0; j < nvars; ++j) {
       e[j]  =   a[j];
       deg   +=  a[j];
     }
+    d->wgt = deg;
   }
   d->deg  = deg;
   d->sdm  = generate_short_divmask(e);
@@ -500,7 +506,7 @@ static inline hl_t insert_in_local_hash_table(
 {
   hl_t i, k, pos;
   len_t j;
-  exp_t deg;
+  exp_t deg, wgt;
   exp_t *e;
   hd_t *d;
   val_t h = 0;
@@ -529,17 +535,20 @@ static inline hl_t insert_in_local_hash_table(
   hmapl[k]  = pos = elld;
   e   = evl[pos];
   d   = hdl + pos;
-  deg = 0;
+  deg = wgt = 0;
   if (mo == WGT) {
     for (j = 0; j < nvars; ++j) {
       e[j]  =   a[j];
-      deg   +=  a[j] * weights[j];
+      deg   +=  a[j];
+      wgt   +=  a[j] * weights[j];
     }
+    d->wgt = wgt;
   } else {
     for (j = 0; j < nvars; ++j) {
       e[j]  =   a[j];
       deg   +=  a[j];
     }
+    d->wgt = deg;
   }
   d->deg  = deg;
   d->sdm  = generate_short_divmask(e);
@@ -596,6 +605,7 @@ static inline void reset_local_hash_table(
 static inline hl_t insert_in_global_hash_table_product_special(
     const val_t h1,
     const deg_t deg,
+    const deg_t wgt,
     const exp_t * const ea,
     const hl_t b
     )
@@ -632,6 +642,7 @@ static inline hl_t insert_in_global_hash_table_product_special(
   hmap[k] = pos = eld;
   d = hd + eld;
   d->deg  = deg + hd[b].deg;
+  d->wgt  = wgt + hd[b].wgt;
   d->sdm  = generate_short_divmask(n);
   d->val  = h;
 
@@ -863,7 +874,8 @@ static inline dt_t *multiplied_polynomial_to_matrix_row(
     const val_t hm,
     const deg_t deg,
     const exp_t * const em,
-    const dt_t *poly
+    const dt_t *poly,
+    const deg_t wgt
     )
 {
   len_t i;
@@ -881,17 +893,17 @@ static inline dt_t *multiplied_polynomial_to_matrix_row(
   /* printf("poly[1] %d | poly[2] %d\n", poly[1], poly[2]); */
   for (i = 3; i < poly[1]; ++i) {
     row[i]  = insert_in_global_hash_table_product_special(
-                hm, deg, em, poly[i]);
+                hm, deg, wgt, em, poly[i]);
   }
   for (;i < poly[2]; i += 4) {
     row[i]    = insert_in_global_hash_table_product_special(
-                  hm, deg, em, poly[i]);
+                  hm, deg, wgt, em, poly[i]);
     row[i+1]  = insert_in_global_hash_table_product_special(
-                  hm, deg, em, poly[i+1]);
+                  hm, deg, wgt, em, poly[i+1]);
     row[i+2]  = insert_in_global_hash_table_product_special(
-                  hm, deg, em, poly[i+2]);
+                  hm, deg, wgt, em, poly[i+2]);
     row[i+3]  = insert_in_global_hash_table_product_special(
-                  hm, deg, em, poly[i+3]);
+                  hm, deg, wgt, em, poly[i+3]);
   }
 
   return row;

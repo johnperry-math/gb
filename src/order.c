@@ -99,6 +99,44 @@ static int matrix_row_initial_input_cmp_drl(
     return 0;
 }
 
+static int matrix_row_initial_input_cmp_wgt(
+        const void *a,
+        const void *b
+        )
+{
+    len_t i;
+
+    const dt_t va  = ((dt_t **)a)[0][3];
+    const dt_t vb  = ((dt_t **)b)[0][3];
+
+    const deg_t da = hd[va].wgt;
+    const deg_t db = hd[vb].wgt;
+
+    /* DRL */
+    if (da < db) {
+        return -1;
+    } else {
+        if (da != db) {
+            return 1;
+        }
+    }
+
+    const exp_t * const ea  = ev[va];
+    const exp_t * const eb  = ev[vb];
+
+    /* note: reverse lexicographical */
+    for (i = nvars; i > 0; --i) {
+        if (ea[i-1] < eb[i-1]) {
+            return -1;
+        } else {
+            if (ea[i-1] != eb[i-1]) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 static int matrix_row_cmp(
         const void *a,
         const void *b
@@ -201,6 +239,52 @@ static int monomial_cmp_pivots_drl(
     return 0;
 }
 
+static int monomial_cmp_pivots_wgt(
+        const hl_t a,
+        const hl_t b
+        )
+{
+    len_t i;
+
+    const hd_t ha = hd[a];
+    const hd_t hb = hd[b];
+#if ORDER_COLUMNS
+    /* first known pivots vs. tail terms */
+    if (ha.idx != hb.idx) {
+        if (ha.idx < hb.idx) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+#endif
+
+    /* then WGT */
+    if (ha.wgt > hb.wgt) {
+        return -1;
+    } else {
+        if (ha.wgt != hb.wgt) {
+            return 1;
+        }
+    }
+
+    const exp_t * const ea  = ev[a];
+    const exp_t * const eb  = ev[b];
+
+    /* note: reverse lexicographical */
+    for (i = nvars; i > 0; --i) {
+        if (ea[i-1] > eb[i-1]) {
+            return 1;
+        } else {
+            if (ea[i-1] != eb[i-1]) {
+                return -1;
+            }
+        }
+    }
+
+    return 0;
+}
+
 static int monomial_cmp_pivots_lex(
         const hl_t a,
         const hl_t b
@@ -272,6 +356,40 @@ static inline int monomial_local_cmp_drl(
     return 0;
 }
 
+static inline int monomial_local_cmp_wgt(
+        const hl_t a,
+        const hl_t b
+        )
+{
+    len_t i;
+
+    const deg_t da = hdl[a].wgt;
+    const deg_t db = hdl[b].wgt;
+
+    /* DRL */
+    if (da > db) {
+        return 1;
+    } else {
+        if (da != db) {
+            return -1;
+        }
+    }
+
+    const exp_t * const ea  = evl[a];
+    const exp_t * const eb  = evl[b];
+
+    for (i = nvars; i > 0; --i) {
+        if (ea[i-1] < eb[i-1]) {
+            return 1;
+        } else {
+            if (ea[i-1] != eb[i-1]) {
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
+
 static inline int monomial_cmp_drl(
         const hl_t a,
         const hl_t b
@@ -281,6 +399,40 @@ static inline int monomial_cmp_drl(
 
     const deg_t da = hd[a].deg;
     const deg_t db = hd[b].deg;
+
+    /* DRL */
+    if (da > db) {
+        return 1;
+    } else {
+        if (da != db) {
+            return -1;
+        }
+    }
+
+    const exp_t * const ea  = ev[a];
+    const exp_t * const eb  = ev[b];
+
+    for (i = nvars; i > 0; --i) {
+        if (ea[i-1] < eb[i-1]) {
+            return 1;
+        } else {
+            if (ea[i-1] != eb[i-1]) {
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
+
+static inline int monomial_cmp_wgt(
+        const hl_t a,
+        const hl_t b
+        )
+{
+    len_t i;
+
+    const deg_t da = hd[a].wgt;
+    const deg_t db = hd[b].wgt;
 
     /* DRL */
     if (da > db) {
@@ -362,6 +514,17 @@ static int hcm_cmp_pivots_drl(
     return monomial_cmp_pivots_drl(ma, mb);
 }
 
+static int hcm_cmp_pivots_wgt(
+        const void *a,
+        const void *b
+        )
+{
+    const hl_t ma  = ((hl_t *)a)[0];
+    const hl_t mb  = ((hl_t *)b)[0];
+
+    return monomial_cmp_pivots_wgt(ma, mb);
+}
+
 static int hcm_cmp_pivots_lex(
         const void *a,
         const void *b
@@ -398,6 +561,17 @@ static int spair_cmp_drl(
     const hl_t lb = ((spair_t *)b)->lcm;
 
     return (int)monomial_cmp(la, lb);
+}
+
+static int spair_cmp_wgt(
+        const void *a,
+        const void *b
+        )
+{
+    const hl_t la = ((spair_t *)a)->lcm;
+    const hl_t lb = ((spair_t *)b)->lcm;
+
+    return (int)monomial_cmp_wgt(la, lb);
 }
 
 /* comparison for s-pairs while their lcms are in the local hash table */

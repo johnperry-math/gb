@@ -34,7 +34,7 @@ int main(
     int64_t len     = f4_julia(
             basis, lens, cfs, exps, field_char, mon_order, nr_vars,
             nr_gens, ht_size, nr_threads, max_nr_pairs, reset_hash_table,
-            la_option, info_level);
+            la_option, info_level, NULL);
 
     if (len != 8173) {
         failure = 1;

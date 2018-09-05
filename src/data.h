@@ -65,6 +65,7 @@ struct hd_t
     len_t div;
     ind_t idx;
     val_t val;
+    deg_t wgt;
 };
 /* global hash table data */
 static hl_t *hmap   = NULL; /* global hash map */

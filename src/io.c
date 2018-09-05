@@ -28,7 +28,7 @@ static inline void set_function_pointers(
 {
     /* todo: this needs to be generalized for different monomial orders */
     switch (mo) {
-        case 0:
+        case DRL:
             matrix_row_initial_input_cmp  =
                 matrix_row_initial_input_cmp_drl;
             monomial_cmp        = monomial_cmp_drl;
@@ -36,13 +36,21 @@ static inline void set_function_pointers(
             spair_cmp           = spair_cmp_drl;
             hcm_cmp             = hcm_cmp_pivots_drl;
             break;
-        case 1:
+        case LEX:
             matrix_row_initial_input_cmp  =
                 matrix_row_initial_input_cmp_lex;
             monomial_cmp        = monomial_cmp_lex;
             monomial_local_cmp  = monomial_local_cmp_lex;
             spair_cmp           = spair_cmp_deglex;
             hcm_cmp             = hcm_cmp_pivots_lex;
+            break;
+        case WGT:
+            matrix_row_initial_input_cmp  =
+                matrix_row_initial_input_cmp_wgt;
+            monomial_cmp        = monomial_cmp_wgt;
+            monomial_local_cmp  = monomial_local_cmp_wgt;
+            spair_cmp           = spair_cmp_wgt;
+            hcm_cmp             = hcm_cmp_pivots_wgt;
             break;
         default:
             matrix_row_initial_input_cmp  =

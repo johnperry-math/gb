@@ -30,7 +30,7 @@ static dt_t **select_spairs_by_minimal_degree(
 {
     len_t i, j, k, l, md, npairs;
     dt_t *b;
-    deg_t d = 0;
+    deg_t d = 0, w =0;
     len_t load = 0, load_all = 0;
     hl_t lcm;
     len_t *gens;
@@ -121,7 +121,8 @@ static dt_t **select_spairs_by_minimal_degree(
             if (mo == WGT) {
               for (l = 0; l < nvars; ++l) {
                   etmp[l] = elcm[l] - eb[l];
-                  d     +=  etmp[l] * weights[l];
+                  d     +=  etmp[l];
+                  w     +=  etmp[l] * weights[l];
               }
             } else {
               for (l = 0; l < nvars; ++l) {
@@ -130,7 +131,7 @@ static dt_t **select_spairs_by_minimal_degree(
               }
             }
             const hl_t h  = hd[lcm].val - hd[b[3]].val;
-            mat[nrows]    = multiplied_polynomial_to_matrix_row(h, d, etmp, b);
+            mat[nrows]    = multiplied_polynomial_to_matrix_row(h, d, etmp, b, w);
             /* mark lcm column as lead term column */
             hd[mat[nrows][3]].idx = 2;
             nrows++;
@@ -168,7 +169,7 @@ static inline dt_t *find_multiplied_reducer(
         )
 {
     len_t i, k;
-    deg_t d = 0;
+    deg_t d = 0, w = 0;
     dt_t *b;
     const exp_t * const e  = ev[m];
     exp_t *f;
@@ -208,14 +209,15 @@ start:
         const hl_t h  = hd[m].val - hd[b[3]].val;
         if (mo == WGT) {
           for (k = 0; k < nvars; ++k) {
-              d += etmp[k] * weights[k];
+              d += etmp[k];
+              w +=  etmp[k] * weights[k];
           }
         } else {
           for (k = 0; k < nvars; ++k) {
               d += etmp[k];
           }
         }
-        b = multiplied_polynomial_to_matrix_row(h, d, etmp, b);
+        b = multiplied_polynomial_to_matrix_row(h, d, etmp, b, w);
         hd[m].div = i;
         return b;
     }
@@ -243,14 +245,15 @@ start2:
         const hl_t h  = hd[m].val - hd[b[3]].val;
         if (mo == WGT) {
           for (k = 0; k < nvars; ++k) {
-              d += etmp[k] * weights[k];
+              d += etmp[k];
+              w += etmp[k] * weights[k];
           }
         } else {
           for (k = 0; k < nvars; ++k) {
               d += etmp[k];
           }
         }
-        b = multiplied_polynomial_to_matrix_row(h, d, etmp, b);
+        b = multiplied_polynomial_to_matrix_row(h, d, etmp, b, w);
         hd[m].div = i;
         return b;
     }
